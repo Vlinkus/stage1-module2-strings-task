@@ -1,5 +1,9 @@
 package com.epam.mjc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class MethodParser {
 
     /**
@@ -20,6 +24,29 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+        List<MethodSignature.Argument> arguments = new ArrayList<>();
+        String accessModifier = "";
+        String returnType = "";
+        String methodName = "";
+        StringTokenizer stringTokenizer = new StringTokenizer(signatureString, "(");
+        if(stringTokenizer.countTokens() == 2) {
+            StringTokenizer stringTokenizerFirst = new StringTokenizer(stringTokenizer.nextElement().toString(), " ");
+            if(stringTokenizerFirst.countTokens() == 3) {
+                accessModifier = stringTokenizerFirst.nextToken();
+            }
+            returnType = stringTokenizerFirst.nextToken();
+            methodName = stringTokenizerFirst.nextToken();
+
+        }
+        StringTokenizer stringTokenizerArguments = new StringTokenizer(stringTokenizer.nextElement().toString(), " ,)");
+        while(stringTokenizerArguments.hasMoreElements()) {
+            if(stringTokenizerArguments.countTokens() >= 2) {
+                arguments.add(new MethodSignature.Argument(stringTokenizerArguments.nextToken(), stringTokenizerArguments.nextToken()));
+            }
+        }
+        MethodSignature methodSignature = new MethodSignature(methodName, arguments);
+        if(!accessModifier.isEmpty()) methodSignature.setAccessModifier(accessModifier);
+        methodSignature.setReturnType(returnType);
+        return methodSignature;
     }
 }
